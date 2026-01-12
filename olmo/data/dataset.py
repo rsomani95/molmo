@@ -20,6 +20,7 @@ else:
 #    fail for large files regardless of download speed
 # 2. Set generous `sock_read` timeout to detect stalls (not overall time)
 # 3. Set fsspec's own timeout parameter as backup
+# Also see: https://github.com/huggingface/datasets/issues/7164
 _AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
     total=None,       # Disable total timeout - large files can take arbitrarily long
     connect=300,      # 5 min to establish connection
@@ -28,7 +29,7 @@ _AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
 )
 
 STORAGE_OPTIONS = {
-    'timeout': 3600,  # fsspec-level timeout (backup)
+    'timeout': 3600,  # fsspec-level timeout (backup). NOTE: This is what really made the diff!
     'client_kwargs': {
         'timeout': _AIOHTTP_TIMEOUT
     }

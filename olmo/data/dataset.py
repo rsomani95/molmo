@@ -44,7 +44,7 @@ DOWNLOAD_CONFIG = DownloadConfig(
 
 class Dataset:
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
         raise NotImplementedError()
 
     def __len__(self):
@@ -123,9 +123,11 @@ class HfDataset(Dataset):
     PATH = None
 
     @classmethod
-    def download(cls, n_procs=None):
+    def download(cls, n_procs=None, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         datasets.load_dataset_builder(cls.PATH).download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split: str, keep_in_memory=True, **kwargs):

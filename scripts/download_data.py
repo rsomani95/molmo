@@ -44,6 +44,8 @@ def download():
                         help="Number of processes to download with")
     parser.add_argument("--ignore_errors", action="store_true",
                         help="If dataset fails to download, skip it and continue with the remaining")
+    parser.add_argument("--force", action="store_true",
+                        help="Force redownload even if dataset already exists (uses HuggingFace's force_redownload mode)")
     args = parser.parse_args()
 
     prepare_cli_environment()
@@ -65,7 +67,7 @@ def download():
         t0 = time.perf_counter()
         logging.info(f"Starting download for {dataset.__name__} ({ix+1}/{len(to_download)})")
         try:
-            dataset.download(n_procs=args.n_procs)
+            dataset.download(n_procs=args.n_procs, force_redownload=args.force)
         except Exception as e:
             if args.ignore_errors:
                 logging.warning(f"Error downloading {dataset.__name__}: {e}")

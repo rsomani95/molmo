@@ -89,9 +89,11 @@ class ChartQa(HfDataset):
 
 class Vqa2(Dataset):
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         VQAv2BuilderMultiQA(DOWNLOADS).download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split, multi_question=False):
@@ -135,9 +137,11 @@ class Vqa2(Dataset):
 
 class AOkVqa(Dataset):
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         AOkVqaBuilder(DOWNLOADS).download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split, direct_answer=False):
@@ -200,9 +204,11 @@ class OkVqa(Dataset):
     PATH = "HuggingFaceM4/OK-VQA"
 
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         datasets.load_dataset_builder(cls.PATH, trust_remote_code=True).download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split: str, multi_question=False, keep_in_memory=False):
@@ -259,9 +265,11 @@ class TextVqa(HfDataset):
     PATH = "facebook/textvqa"
 
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         datasets.load_dataset_builder(cls.PATH, trust_remote_code=True).download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split: str, identifier=None, keep_in_memory=False):
@@ -286,9 +294,11 @@ class TextVqa(HfDataset):
 class TallyQa(Dataset):
 
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         TallyQaBuilder().download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split):
@@ -319,9 +329,11 @@ class TallyQa(Dataset):
 class AI2D(Dataset):
 
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         Ai2dDatasetBuilder().download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split, boxes="both"):
@@ -377,9 +389,11 @@ class ScienceQAImageOnly(Dataset):
     PATH = "derek-thomas/ScienceQA"
 
     @classmethod
-    def download(self, n_procs=1):
-        datasets.load_dataset_builder(self.PATH).download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
+        datasets.load_dataset_builder(cls.PATH).download_and_prepare(
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split):
@@ -413,7 +427,8 @@ class InfoQa(DatasetBase):
     SPLITS = ["train", "validation", "test"]
 
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        # Manual download dataset - force_redownload not applicable
         for split in cls.SPLITS:
             if split == "validation":
                 filename = "infographicsVQA_val_v1.0_withQT.json"
@@ -490,7 +505,8 @@ class DocQa(HfDataset):
 class SceneTextQa(DatasetBase):
 
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        # Manual download dataset - force_redownload not applicable
         for split in ["train", "test"]:
             if not exists(join(join(ST_QA_SRC, f"{split}_task_3.json"))):
                 raise ValueError(
@@ -536,9 +552,11 @@ class SceneTextQa(DatasetBase):
 class CountBenchQa(Dataset):
 
     @classmethod
-    def download(self, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         CountQaBuilder().download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self):
@@ -564,9 +582,11 @@ class CountBenchQa(Dataset):
 class TabWMPDirectAnswer(Dataset):
 
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         TabMwpBuilder().download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split, include_options: bool):
@@ -595,9 +615,11 @@ class TabWMPDirectAnswer(Dataset):
 class FigureQa(Dataset):
 
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         FigureQaBuilder().download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split, in_memory=False):
@@ -619,9 +641,11 @@ class FigureQa(Dataset):
 class PlotQa(Dataset):
 
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         PlotQaBuilder().download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split, in_memory=False):
@@ -642,10 +666,12 @@ class PlotQa(Dataset):
 
 class AndroidControl(Dataset):
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         AndroidControlBuilder().download_and_prepare(
             num_proc=n_procs,
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split, mode="all", in_memory=False):
@@ -706,9 +732,11 @@ class AndroidControl(Dataset):
 
 class DvQa(Dataset):
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         DvQaBuilder().download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split, in_memory=False):
@@ -811,13 +839,15 @@ class MMMU(Dataset):
     ]
 
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         for name in cls.NAMES:
-            if exists(join(DATA_HOME, "mmmu", name)):
+            if not force_redownload and exists(join(DATA_HOME, "mmmu", name)):
                 continue
             builder = datasets.load_dataset_builder("MMMU/MMMU", name=name)
             builder.download_and_prepare(
-                download_config=DOWNLOAD_CONFIG
+                download_config=DOWNLOAD_CONFIG,
+                download_mode=download_mode,
             )
 
     def __init__(self, split: str):
@@ -859,9 +889,11 @@ class MMMU(Dataset):
 class ClockBench(Dataset):
 
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         ClockBenchBuilder().download_and_prepare(
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
 
     def __init__(self, split):

@@ -72,16 +72,18 @@ def save_local_dataset(dataset: datasets.Dataset, name: str, n_procs, n_val=None
 
 class PixMoCount(Dataset):
     @classmethod
-    def download(cls, n_procs=1, check_sha=False, n_val=1024, cache_only=False):
+    def download(cls, n_procs=1, check_sha=False, n_val=1024, cache_only=False, force_redownload=False):
         local_name = join(PIXMO_DATASETS, "count")
-        if exists(local_name):
+        if not force_redownload and exists(local_name):
             return
+        download_mode = "force_redownload" if force_redownload else None
         all_data = datasets.DatasetDict()
         for split in ["validation", "test", "train"]:
             ds = datasets.load_dataset(
                 "allenai/pixmo-count",
                 split=split,
-                download_config=DOWNLOAD_CONFIG
+                download_config=DOWNLOAD_CONFIG,
+                download_mode=download_mode,
             )
             url_to_filename = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=False)
             ds = ds.filter(lambda x: x in url_to_filename, input_columns=["image_url"])
@@ -123,10 +125,12 @@ class PixMoDocs(Dataset):
     }
 
     @classmethod
-    def download(cls, n_procs=1):
+    def download(cls, n_procs=1, force_redownload=False):
+        download_mode = "force_redownload" if force_redownload else None
         for name in ["other", "charts", "diagrams", "tables"]:
             datasets.load_dataset_builder("allenai/pixmo-docs", name=name).download_and_prepare(
-                download_config=DOWNLOAD_CONFIG
+                download_config=DOWNLOAD_CONFIG,
+                download_mode=download_mode,
             )
 
     def __init__(self, doc_type, split, sample=None, keep_in_memory=False, v1_style=False):
@@ -163,18 +167,21 @@ class PixMoDocs(Dataset):
 class PixMoPoints(Dataset):
 
     @classmethod
-    def download(cls, n_procs=1, check_sha=True, n_val=2048, cache_only=False, hold_out_pointing_eval=True):
+    def download(cls, n_procs=1, check_sha=True, n_val=2048, cache_only=False, hold_out_pointing_eval=True, force_redownload=False):
         collection_method = ["pointing", "counting"]
         local_names = [join(PIXMO_DATASETS, f"points-{name}") for name in collection_method]
-        if all(exists(x) for x in local_names):
+        if not force_redownload and all(exists(x) for x in local_names):
             return
+        download_mode = "force_redownload" if force_redownload else None
         ds = datasets.load_dataset("allenai/pixmo-points", split="train",
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
         filenames = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=VERIFY)
         if hold_out_pointing_eval:
             eval_ds = datasets.load_dataset("allenai/pixmo-points-eval", split="test",
-                download_config=DOWNLOAD_CONFIG
+                download_config=DOWNLOAD_CONFIG,
+                download_mode=download_mode,
             )
             for url in eval_ds["image_url"]:
                 if url in filenames:
@@ -233,12 +240,14 @@ class PixMoPoints(Dataset):
 class PixMoPointExplanations(Dataset):
 
     @classmethod
-    def download(cls, n_procs=1, check_sha=True, n_val=1024, cache_only=False):
+    def download(cls, n_procs=1, check_sha=True, n_val=1024, cache_only=False, force_redownload=False):
         local_name = join(PIXMO_DATASETS, "point-explanations")
-        if exists(local_name):
+        if not force_redownload and exists(local_name):
             return
+        download_mode = "force_redownload" if force_redownload else None
         ds = datasets.load_dataset("allenai/pixmo-point-explanations", split="train",
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
         ds = ds.filter(lambda x: x is not None, input_columns=["parsed_response"])
         filenames = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=VERIFY)
@@ -291,12 +300,14 @@ class PixMoPointExplanations(Dataset):
 
 class PixMoCapQa(Dataset):
     @classmethod
-    def download(cls, n_procs=1, check_sha=False, n_val=2048, cache_only=False):
+    def download(cls, n_procs=1, check_sha=False, n_val=2048, cache_only=False, force_redownload=False):
         local_name = join(PIXMO_DATASETS, "cap-qa")
-        if exists(local_name):
+        if not force_redownload and exists(local_name):
             return
+        download_mode = "force_redownload" if force_redownload else None
         ds = datasets.load_dataset("allenai/pixmo-cap-qa", split="train",
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
         filenames = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=VERIFY)
         filtered_dataset = filter_and_group_data(ds, filenames, check_sha)
@@ -337,12 +348,14 @@ class PixMoCapQa(Dataset):
 
 class PixMoCap(Dataset):
     @classmethod
-    def download(cls, n_procs=1, check_sha=False, n_val=2048, cache_only=False, sample=None):
+    def download(cls, n_procs=1, check_sha=False, n_val=2048, cache_only=False, sample=None, force_redownload=False):
         local_name = join(PIXMO_DATASETS, "cap")
-        if exists(local_name):
+        if not force_redownload and exists(local_name):
             return
+        download_mode = "force_redownload" if force_redownload else None
         ds = datasets.load_dataset("allenai/pixmo-cap", split="train",
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
         if sample:
             ds = ds.take(sample)
@@ -393,12 +406,14 @@ class PixMoCap(Dataset):
 
 class PixMoAskModelAnything(Dataset):
     @classmethod
-    def download(cls, n_procs=1, check_sha=True, n_val=2048, cache_only=False):
+    def download(cls, n_procs=1, check_sha=True, n_val=2048, cache_only=False, force_redownload=False):
         local_name = join(PIXMO_DATASETS, "ask-model-anything")
-        if exists(local_name):
+        if not force_redownload and exists(local_name):
             return
+        download_mode = "force_redownload" if force_redownload else None
         ds = datasets.load_dataset("allenai/pixmo-ask-model-anything", split="train",
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
         filenames = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=VERIFY)
         filtered_dataset = filter_and_group_data(ds, filenames, check_sha)
@@ -443,12 +458,14 @@ class PixMoAskModelAnything(Dataset):
 
 class PixMoPointsEval(Dataset):
     @classmethod
-    def download(cls, n_procs=1, check_sha=True, cache_only=False):
+    def download(cls, n_procs=1, check_sha=True, cache_only=False, force_redownload=False):
         local_name = join(PIXMO_DATASETS, "pixmo-points-eval")
-        if exists(local_name):
+        if not force_redownload and exists(local_name):
             return
+        download_mode = "force_redownload" if force_redownload else None
         ds = datasets.load_dataset("allenai/pixmo-points-eval", split="test",
-            download_config=DOWNLOAD_CONFIG
+            download_config=DOWNLOAD_CONFIG,
+            download_mode=download_mode,
         )
         url_to_filename = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=VERIFY)
         ds = ds.filter(lambda x: x in url_to_filename, input_columns=["image_url"])

@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
-from olmo.data.dataset import STORAGE_OPTIONS
+from olmo.data.dataset import DOWNLOAD_CONFIG
 
 QAS_URL = "https://raw.githubusercontent.com/google-research/big_vision/46b2456f54b9d4f829d1925b78943372b376153d/big_vision/datasets/countbenchqa/data/countbench_paired_questions.json"
 PARQUET_URL = "https://huggingface.co/datasets/nielsr/countbench/resolve/main/data/train-00000-of-00001-cf54c241ba947306.parquet"
@@ -70,6 +70,6 @@ class CountQaBuilder(datasets.GeneratorBasedBuilder):
 
 if __name__ == "__main__":
     CountQaBuilder().download_and_prepare(
-        storage_options=STORAGE_OPTIONS
+        download_config=DOWNLOAD_CONFIG
     )
 

@@ -6,7 +6,7 @@ from collections import defaultdict
 from os.path import exists
 from os.path import join
 
-from olmo.data.dataset import DATA_HOME, DatasetBase, STORAGE_OPTIONS
+from olmo.data.dataset import DATA_HOME, DatasetBase, DOWNLOAD_CONFIG
 from olmo.hf_datasets.android_control import AndroidControlBuilder
 from olmo.util import load_json
 
@@ -223,7 +223,7 @@ class AndroidControl(DatasetBase):  # TODO needs a preparation script
     def download(self, n_procs=1):
         AndroidControlBuilder().download_and_prepare(
             num_proc=n_procs,
-            storage_options=STORAGE_OPTIONS
+            download_config=DOWNLOAD_CONFIG
         )
 
     def __init__(self, split, sample=None, mode="all"):

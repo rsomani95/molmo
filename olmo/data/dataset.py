@@ -4,6 +4,7 @@ import warnings
 from os.path import join
 
 import datasets
+from datasets import DownloadConfig
 import numpy as np
 
 if "MOLMO_DATA_DIR" in os.environ:
@@ -14,21 +15,30 @@ else:
 
 
 # Comprehensive timeout configuration for fsspec/aiohttp downloads.
-# Setting all timeout parameters explicitly to avoid hitting shorter defaults.
-# - total: Total timeout for the entire operation (1 hour)
-# - connect: Timeout for establishing a connection
-# - sock_connect: Timeout for connecting to peer for a new connection
-# - sock_read: Timeout for reading a portion of data from peer (important for large files)
+# Key insight: for large file downloads, we need to:
+# 1. Disable `total` timeout (set to None) - this runs from request start and will
+#    fail for large files regardless of download speed
+# 2. Set generous `sock_read` timeout to detect stalls (not overall time)
+# 3. Set fsspec's own timeout parameter as backup
+_AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
+    total=None,       # Disable total timeout - large files can take arbitrarily long
+    connect=300,      # 5 min to establish connection
+    sock_connect=300, # 5 min for socket connection
+    sock_read=600     # 10 min between data chunks - detects stalls, not total time
+)
+
 STORAGE_OPTIONS = {
+    'timeout': 3600,  # fsspec-level timeout (backup)
     'client_kwargs': {
-        'timeout': aiohttp.ClientTimeout(
-            total=3600,
-            connect=60,
-            sock_connect=60,
-            sock_read=3600
-        )
+        'timeout': _AIOHTTP_TIMEOUT
     }
 }
+
+# DownloadConfig for HuggingFace datasets with extended timeouts
+DOWNLOAD_CONFIG = DownloadConfig(
+    storage_options=STORAGE_OPTIONS,
+    max_retries=5,
+)
 
 
 class Dataset:
@@ -114,14 +124,17 @@ class HfDataset(Dataset):
     @classmethod
     def download(cls, n_procs=None):
         datasets.load_dataset_builder(cls.PATH).download_and_prepare(
-            storage_options=STORAGE_OPTIONS
+            download_config=DOWNLOAD_CONFIG
         )
 
     def __init__(self, split: str, keep_in_memory=True, **kwargs):
         self.split = split
+        # Remove any timeout-related kwargs to ensure our DOWNLOAD_CONFIG is used
+        kwargs.pop('download_config', None)
+        kwargs.pop('storage_options', None)
         self.dataset = datasets.load_dataset(
             self.PATH, split=split, keep_in_memory=keep_in_memory,
-            storage_options=STORAGE_OPTIONS,
+            download_config=DOWNLOAD_CONFIG,
             **kwargs
         )
 

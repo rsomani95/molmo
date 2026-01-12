@@ -5,7 +5,7 @@ from typing import List
 
 import datasets
 
-from olmo.data.dataset import STORAGE_OPTIONS
+from olmo.data.dataset import DOWNLOAD_CONFIG
 
 
 class TabMwpBuilder(datasets.GeneratorBasedBuilder):
@@ -57,5 +57,5 @@ class TabMwpBuilder(datasets.GeneratorBasedBuilder):
 
 if __name__ == "__main__":
     TabMwpBuilder().download_and_prepare(
-        storage_options=STORAGE_OPTIONS
+        download_config=DOWNLOAD_CONFIG
     )

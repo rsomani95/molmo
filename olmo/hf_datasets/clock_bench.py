@@ -8,7 +8,7 @@ import datasets
 import numpy as np
 from PIL import Image
 
-from olmo.data.dataset import STORAGE_OPTIONS
+from olmo.data.dataset import DOWNLOAD_CONFIG
 
 
 def crop_with_context(img_shape, bbox, margin=0.2):
@@ -116,5 +116,5 @@ class ClockBenchBuilder(datasets.GeneratorBasedBuilder):
 
 if __name__ == "__main__":
     ClockBenchBuilder().download_and_prepare(
-        storage_options=STORAGE_OPTIONS
+        download_config=DOWNLOAD_CONFIG
     )

@@ -11,7 +11,7 @@ from PIL import Image, ImageFont
 from PIL.ImageDraw import ImageDraw
 from tqdm import tqdm
 
-from olmo.data.dataset import STORAGE_OPTIONS
+from olmo.data.dataset import DOWNLOAD_CONFIG
 
 AI2D_ALL = "http://ai2-website.s3.amazonaws.com/data/ai2d-all.zip"
 AI2D_TEST_IDS = "https://s3-us-east-2.amazonaws.com/prior-datasets/ai2d_test_ids.csv"
@@ -257,6 +257,6 @@ class Ai2dDatasetBuilder(datasets.GeneratorBasedBuilder):
 
 if __name__ == "__main__":
     Ai2dDatasetBuilder().download_and_prepare(
-        storage_options=STORAGE_OPTIONS
+        download_config=DOWNLOAD_CONFIG
     )
 

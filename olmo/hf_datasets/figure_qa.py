@@ -5,7 +5,7 @@ from typing import List
 
 import datasets
 
-from olmo.data.dataset import STORAGE_OPTIONS
+from olmo.data.dataset import DOWNLOAD_CONFIG
 
 
 class FigureQaBuilder(datasets.GeneratorBasedBuilder):
@@ -74,5 +74,5 @@ class FigureQaBuilder(datasets.GeneratorBasedBuilder):
 
 if __name__ == "__main__":
     FigureQaBuilder().download_and_prepare(
-        storage_options=STORAGE_OPTIONS
+        download_config=DOWNLOAD_CONFIG
     )

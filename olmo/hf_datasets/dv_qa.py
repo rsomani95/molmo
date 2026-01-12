@@ -1,10 +1,11 @@
-import aiohttp
 import json
 from collections import defaultdict
 from os.path import join
 from typing import List
 
 import datasets
+
+from olmo.data.dataset import STORAGE_OPTIONS
 
 
 class DvQaBuilder(datasets.GeneratorBasedBuilder):
@@ -60,5 +61,5 @@ class DvQaBuilder(datasets.GeneratorBasedBuilder):
 
 if __name__ == "__main__":
     DvQaBuilder().download_and_prepare(
-        storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+        storage_options=STORAGE_OPTIONS
     )

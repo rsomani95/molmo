@@ -1,4 +1,3 @@
-import aiohttp
 import json
 import logging
 import re
@@ -9,7 +8,7 @@ from os.path import join
 import datasets
 import numpy as np
 
-from olmo.data.dataset import DATA_HOME, DatasetBase, Dataset, HfDataset
+from olmo.data.dataset import DATA_HOME, DatasetBase, Dataset, HfDataset, STORAGE_OPTIONS
 from olmo.hf_datasets.a_okvqa import AOkVqaBuilder
 from olmo.hf_datasets.ai2d import Ai2dDatasetBuilder
 from olmo.hf_datasets.android_control import AndroidControlBuilder
@@ -92,7 +91,7 @@ class Vqa2(Dataset):
     @classmethod
     def download(cls, n_procs=1):
         VQAv2BuilderMultiQA(DOWNLOADS).download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split, multi_question=False):
@@ -138,7 +137,7 @@ class AOkVqa(Dataset):
     @classmethod
     def download(cls, n_procs=1):
         AOkVqaBuilder(DOWNLOADS).download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split, direct_answer=False):
@@ -203,7 +202,7 @@ class OkVqa(Dataset):
     @classmethod
     def download(cls, n_procs=1):
         datasets.load_dataset_builder(cls.PATH, trust_remote_code=True).download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split: str, multi_question=False, keep_in_memory=False):
@@ -211,7 +210,7 @@ class OkVqa(Dataset):
         self.multi_question = multi_question
         dataset = datasets.load_dataset(
             self.PATH, split=split, trust_remote_code=True, keep_in_memory=keep_in_memory,
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
         if self.multi_question:
             grouped_by_image = defaultdict(list)
@@ -262,7 +261,7 @@ class TextVqa(HfDataset):
     @classmethod
     def download(cls, n_procs=1):
         datasets.load_dataset_builder(cls.PATH, trust_remote_code=True).download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split: str, identifier=None, keep_in_memory=False):
@@ -289,7 +288,7 @@ class TallyQa(Dataset):
     @classmethod
     def download(cls, n_procs=1):
         TallyQaBuilder().download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split):
@@ -322,7 +321,7 @@ class AI2D(Dataset):
     @classmethod
     def download(cls, n_procs=1):
         Ai2dDatasetBuilder().download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split, boxes="both"):
@@ -380,7 +379,7 @@ class ScienceQAImageOnly(Dataset):
     @classmethod
     def download(self, n_procs=1):
         datasets.load_dataset_builder(self.PATH).download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split):
@@ -388,7 +387,7 @@ class ScienceQAImageOnly(Dataset):
         self.dataset = datasets.load_dataset(
             self.PATH,
             split=split,
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         ).filter(lambda ex: ex["image"] is not None)
         super().__init__()
 
@@ -539,7 +538,7 @@ class CountBenchQa(Dataset):
     @classmethod
     def download(self, n_procs=1):
         CountQaBuilder().download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self):
@@ -567,7 +566,7 @@ class TabWMPDirectAnswer(Dataset):
     @classmethod
     def download(cls, n_procs=1):
         TabMwpBuilder().download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split, include_options: bool):
@@ -598,7 +597,7 @@ class FigureQa(Dataset):
     @classmethod
     def download(cls, n_procs=1):
         FigureQaBuilder().download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split, in_memory=False):
@@ -622,7 +621,7 @@ class PlotQa(Dataset):
     @classmethod
     def download(cls, n_procs=1):
         PlotQaBuilder().download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split, in_memory=False):
@@ -646,7 +645,7 @@ class AndroidControl(Dataset):
     def download(cls, n_procs=1):
         AndroidControlBuilder().download_and_prepare(
             num_proc=n_procs,
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split, mode="all", in_memory=False):
@@ -709,7 +708,7 @@ class DvQa(Dataset):
     @classmethod
     def download(cls, n_procs=1):
         DvQaBuilder().download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split, in_memory=False):
@@ -818,7 +817,7 @@ class MMMU(Dataset):
                 continue
             builder = datasets.load_dataset_builder("MMMU/MMMU", name=name)
             builder.download_and_prepare(
-                storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+                storage_options=STORAGE_OPTIONS
             )
 
     def __init__(self, split: str):
@@ -829,7 +828,7 @@ class MMMU(Dataset):
                     "MMMU/MMMU",
                     name=name,
                     split=split,
-                    storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+                    storage_options=STORAGE_OPTIONS
                 )
             )
         self.data = datasets.concatenate_datasets(all_parts)
@@ -862,7 +861,7 @@ class ClockBench(Dataset):
     @classmethod
     def download(cls, n_procs=1):
         ClockBenchBuilder().download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split):

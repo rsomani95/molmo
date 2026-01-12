@@ -1,10 +1,11 @@
-import aiohttp
 import json
 from os import listdir
 from os.path import join
 from typing import List
 
 import datasets
+
+from olmo.data.dataset import STORAGE_OPTIONS
 
 
 class TabMwpBuilder(datasets.GeneratorBasedBuilder):
@@ -56,5 +57,5 @@ class TabMwpBuilder(datasets.GeneratorBasedBuilder):
 
 if __name__ == "__main__":
     TabMwpBuilder().download_and_prepare(
-        storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+        storage_options=STORAGE_OPTIONS
     )

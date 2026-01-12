@@ -13,6 +13,24 @@ else:
     DATA_HOME = None
 
 
+# Comprehensive timeout configuration for fsspec/aiohttp downloads.
+# Setting all timeout parameters explicitly to avoid hitting shorter defaults.
+# - total: Total timeout for the entire operation (1 hour)
+# - connect: Timeout for establishing a connection
+# - sock_connect: Timeout for connecting to peer for a new connection
+# - sock_read: Timeout for reading a portion of data from peer (important for large files)
+STORAGE_OPTIONS = {
+    'client_kwargs': {
+        'timeout': aiohttp.ClientTimeout(
+            total=3600,
+            connect=60,
+            sock_connect=60,
+            sock_read=3600
+        )
+    }
+}
+
+
 class Dataset:
     @classmethod
     def download(cls, n_procs=1):
@@ -96,14 +114,14 @@ class HfDataset(Dataset):
     @classmethod
     def download(cls, n_procs=None):
         datasets.load_dataset_builder(cls.PATH).download_and_prepare(
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __init__(self, split: str, keep_in_memory=True, **kwargs):
         self.split = split
         self.dataset = datasets.load_dataset(
             self.PATH, split=split, keep_in_memory=keep_in_memory,
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}},
+            storage_options=STORAGE_OPTIONS,
             **kwargs
         )
 

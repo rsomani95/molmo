@@ -1,4 +1,3 @@
-import aiohttp
 import logging
 import re
 import shutil
@@ -7,7 +6,7 @@ from os.path import join, exists
 import datasets
 import numpy as np
 
-from olmo.data.dataset import DATA_HOME, Dataset
+from olmo.data.dataset import DATA_HOME, Dataset, STORAGE_OPTIONS
 from olmo.data.download_urls import download_pixmo_urls, filter_and_group_data
 
 if DATA_HOME is not None:
@@ -82,7 +81,7 @@ class PixMoCount(Dataset):
             ds = datasets.load_dataset(
                 "allenai/pixmo-count",
                 split=split,
-                storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+                storage_options=STORAGE_OPTIONS
             )
             url_to_filename = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=False)
             ds = ds.filter(lambda x: x in url_to_filename, input_columns=["image_url"])
@@ -127,7 +126,7 @@ class PixMoDocs(Dataset):
     def download(cls, n_procs=1):
         for name in ["other", "charts", "diagrams", "tables"]:
             datasets.load_dataset_builder("allenai/pixmo-docs", name=name).download_and_prepare(
-                storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+                storage_options=STORAGE_OPTIONS
             )
 
     def __init__(self, doc_type, split, sample=None, keep_in_memory=False, v1_style=False):
@@ -137,7 +136,7 @@ class PixMoDocs(Dataset):
         self.v1_style = v1_style
         self.dataset = datasets.load_dataset(
             "allenai/pixmo-docs", name=doc_type, split=split, keep_in_memory=keep_in_memory,
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
 
     def __len__(self):
@@ -170,12 +169,12 @@ class PixMoPoints(Dataset):
         if all(exists(x) for x in local_names):
             return
         ds = datasets.load_dataset("allenai/pixmo-points", split="train",
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
         filenames = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=VERIFY)
         if hold_out_pointing_eval:
             eval_ds = datasets.load_dataset("allenai/pixmo-points-eval", split="test",
-                storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+                storage_options=STORAGE_OPTIONS
             )
             for url in eval_ds["image_url"]:
                 if url in filenames:
@@ -239,7 +238,7 @@ class PixMoPointExplanations(Dataset):
         if exists(local_name):
             return
         ds = datasets.load_dataset("allenai/pixmo-point-explanations", split="train",
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
         ds = ds.filter(lambda x: x is not None, input_columns=["parsed_response"])
         filenames = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=VERIFY)
@@ -297,7 +296,7 @@ class PixMoCapQa(Dataset):
         if exists(local_name):
             return
         ds = datasets.load_dataset("allenai/pixmo-cap-qa", split="train",
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
         filenames = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=VERIFY)
         filtered_dataset = filter_and_group_data(ds, filenames, check_sha)
@@ -343,7 +342,7 @@ class PixMoCap(Dataset):
         if exists(local_name):
             return
         ds = datasets.load_dataset("allenai/pixmo-cap", split="train",
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
         if sample:
             ds = ds.take(sample)
@@ -399,7 +398,7 @@ class PixMoAskModelAnything(Dataset):
         if exists(local_name):
             return
         ds = datasets.load_dataset("allenai/pixmo-ask-model-anything", split="train",
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
         filenames = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=VERIFY)
         filtered_dataset = filter_and_group_data(ds, filenames, check_sha)
@@ -449,7 +448,7 @@ class PixMoPointsEval(Dataset):
         if exists(local_name):
             return
         ds = datasets.load_dataset("allenai/pixmo-points-eval", split="test",
-            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+            storage_options=STORAGE_OPTIONS
         )
         url_to_filename = download_pixmo_urls(ds, n_procs, check_sha=check_sha, cache_only=cache_only, verify=VERIFY)
         ds = ds.filter(lambda x: x in url_to_filename, input_columns=["image_url"])

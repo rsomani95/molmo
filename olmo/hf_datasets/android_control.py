@@ -6,7 +6,6 @@
 # Clone https://github.com/google-deepmind/android_env.git
 # install it, and add it to PYTHONPATH
 
-import aiohttp
 import io
 import json
 from typing import Dict
@@ -15,6 +14,7 @@ import datasets
 from PIL import Image
 from datasets import tqdm
 
+from olmo.data.dataset import STORAGE_OPTIONS
 from olmo.hf_datasets.android_control_utils import *
 
 TF_RECORD_NAMES = [
@@ -260,5 +260,5 @@ class AndroidControlBuilder(datasets.GeneratorBasedBuilder):
 if __name__ == "__main__":
     builder = AndroidControlBuilder()
     builder.download_and_prepare(
-        storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+        storage_options=STORAGE_OPTIONS
     )

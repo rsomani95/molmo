@@ -1,4 +1,3 @@
-import aiohttp
 import ast
 import csv
 import unicodedata
@@ -8,6 +7,8 @@ from typing import List
 import datasets
 import numpy as np
 from PIL import Image
+
+from olmo.data.dataset import STORAGE_OPTIONS
 
 
 def crop_with_context(img_shape, bbox, margin=0.2):
@@ -115,5 +116,5 @@ class ClockBenchBuilder(datasets.GeneratorBasedBuilder):
 
 if __name__ == "__main__":
     ClockBenchBuilder().download_and_prepare(
-        storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+        storage_options=STORAGE_OPTIONS
     )

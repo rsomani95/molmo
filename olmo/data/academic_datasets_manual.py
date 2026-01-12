@@ -1,5 +1,6 @@
 """Datasets the load directly from source files,
 Currently not used in favour of using HF datasets"""
+import aiohttp
 import json
 import logging
 from collections import defaultdict
@@ -221,7 +222,10 @@ class AOkVqaManual(DatasetBase):
 class AndroidControl(DatasetBase):  # TODO needs a preparation script
 
     def download(self, n_procs=1):
-        AndroidControlBuilder().download_and_prepare(num_proc=n_procs)
+        AndroidControlBuilder().download_and_prepare(
+            num_proc=n_procs,
+            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+        )
 
     def __init__(self, split, sample=None, mode="all"):
         assert split in ["train", "validation", "test"]

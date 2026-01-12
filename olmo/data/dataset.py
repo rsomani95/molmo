@@ -1,3 +1,4 @@
+import aiohttp
 import os
 import warnings
 from os.path import join
@@ -94,12 +95,17 @@ class HfDataset(Dataset):
 
     @classmethod
     def download(cls, n_procs=None):
-        datasets.load_dataset_builder(cls.PATH).download_and_prepare()
+        datasets.load_dataset_builder(cls.PATH).download_and_prepare(
+            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+        )
 
     def __init__(self, split: str, keep_in_memory=True, **kwargs):
         self.split = split
         self.dataset = datasets.load_dataset(
-            self.PATH, split=split, keep_in_memory=keep_in_memory, **kwargs)
+            self.PATH, split=split, keep_in_memory=keep_in_memory,
+            storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}},
+            **kwargs
+        )
 
     def __len__(self):
         return len(self.dataset)

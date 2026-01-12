@@ -1,3 +1,4 @@
+import aiohttp
 import json
 from os import listdir
 from os.path import join
@@ -54,4 +55,6 @@ class TabMwpBuilder(datasets.GeneratorBasedBuilder):
 
 
 if __name__ == "__main__":
-    TabMwpBuilder().download_and_prepare()
+    TabMwpBuilder().download_and_prepare(
+        storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+    )

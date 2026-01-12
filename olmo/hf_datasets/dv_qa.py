@@ -1,3 +1,4 @@
+import aiohttp
 import json
 from collections import defaultdict
 from os.path import join
@@ -58,4 +59,6 @@ class DvQaBuilder(datasets.GeneratorBasedBuilder):
 
 
 if __name__ == "__main__":
-    DvQaBuilder().download_and_prepare()
+    DvQaBuilder().download_and_prepare(
+        storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+    )

@@ -6,6 +6,7 @@
 # Clone https://github.com/google-deepmind/android_env.git
 # install it, and add it to PYTHONPATH
 
+import aiohttp
 import io
 import json
 from typing import Dict
@@ -258,4 +259,6 @@ class AndroidControlBuilder(datasets.GeneratorBasedBuilder):
 
 if __name__ == "__main__":
     builder = AndroidControlBuilder()
-    builder.download_and_prepare()
+    builder.download_and_prepare(
+        storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+    )

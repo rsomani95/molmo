@@ -1,3 +1,4 @@
+import aiohttp
 import io
 import json
 from os.path import join
@@ -67,5 +68,7 @@ class CountQaBuilder(datasets.GeneratorBasedBuilder):
 
 
 if __name__ == "__main__":
-    CountQaBuilder().download_and_prepare()
+    CountQaBuilder().download_and_prepare(
+        storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+    )
 

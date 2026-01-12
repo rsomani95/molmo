@@ -1,3 +1,4 @@
+import aiohttp
 import ast
 import csv
 import unicodedata
@@ -113,4 +114,6 @@ class ClockBenchBuilder(datasets.GeneratorBasedBuilder):
 
 
 if __name__ == "__main__":
-    ClockBenchBuilder().download_and_prepare()
+    ClockBenchBuilder().download_and_prepare(
+        storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+    )

@@ -1,3 +1,4 @@
+import aiohttp
 import json
 from collections import defaultdict
 from os import listdir
@@ -254,5 +255,7 @@ class Ai2dDatasetBuilder(datasets.GeneratorBasedBuilder):
 
 
 if __name__ == "__main__":
-    Ai2dDatasetBuilder().download_and_prepare()
+    Ai2dDatasetBuilder().download_and_prepare(
+        storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+    )
 

@@ -1,3 +1,4 @@
+import aiohttp
 import json
 from collections import defaultdict
 from os.path import join
@@ -71,4 +72,6 @@ class FigureQaBuilder(datasets.GeneratorBasedBuilder):
 
 
 if __name__ == "__main__":
-    FigureQaBuilder().download_and_prepare()
+    FigureQaBuilder().download_and_prepare(
+        storage_options={'client_kwargs': {'timeout': aiohttp.ClientTimeout(total=3600)}}
+    )
